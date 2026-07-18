@@ -4,8 +4,11 @@ import Fonts from 'unplugin-fonts/vite'
 import { defineConfig } from 'vite'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
+const repoBase = '/ar-movie-hub/'
+
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  base: mode === 'production' ? repoBase : '/',
   plugins: [
     Vue({
       template: { transformAssetUrls },
@@ -49,4 +52,4 @@ export default defineConfig({
     port: 3000,
     strictPort: false,
   },
-})
+}))

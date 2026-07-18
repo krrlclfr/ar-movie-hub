@@ -1,0 +1,5 @@
+// for browser
+npm run dev - for web
+
+// for electron
+npm run electron: dev

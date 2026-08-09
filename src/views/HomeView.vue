@@ -21,7 +21,7 @@
             class="overflow-hidden carousel-full"
           >
             <v-carousel-item v-for="movie in featuredMovies" :key="movie.id">
-              <v-img :src="getBackdropUrl(movie.backdrop_path)" :alt="movie.title" height="660" class="carousel-image">
+              <v-img :src="getBackdropUrl(movie.backdrop_path)" :alt="movie.title" cover class="carousel-image">
                 <div class="d-flex fill-height align-end">
                   <div class="pa-4 text-white carousel-caption w-100">
                     <div class="text-h6 font-weight-bold">{{ movie.title }}</div>

@@ -6,14 +6,14 @@
       <v-card v-if="movieDetail" rounded="lg" variant="outlined">
         <v-row dense>
           <v-col cols="12" md="4">
-            <v-img :src="posterUrl" :alt="movieDetail.title" height="420" cover />
+            <v-img :src="posterUrl" :alt="displayTitle" height="420" cover />
           </v-col>
           <v-col cols="12" md="8">
-            <v-card-title class="text-h5">{{ movieDetail.title }}</v-card-title>
+            <v-card-title class="text-h5">{{ displayTitle }}</v-card-title>
             <v-card-text>
               <p class="mb-3">{{ movieDetail.overview || 'No overview available.' }}</p>
               <div class="mb-2"><strong>Genres:</strong> {{ genresLabel }}</div>
-              <div class="mb-2"><strong>Release date:</strong> {{ movieDetail.release_date || 'N/A' }}</div>
+              <div class="mb-2"><strong>Release date:</strong> {{ releaseDateLabel }}</div>
               <div class="mb-2"><strong>Vote average:</strong> {{ movieDetail.vote_average?.toFixed(1) || 'N/A' }} / 10</div>
               <div><strong>Cast:</strong> {{ castLabel }}</div>
             </v-card-text>
@@ -45,6 +45,7 @@
 
   const route = useRoute()
   const router = useRouter()
+  const mediaType = computed(() => (route.path.startsWith('/tv/') ? 'tv' : 'movie'))
   const movieDetail = ref<any | null>(null)
   const cast = ref<any[]>([])
   const movieId = computed(() => Number(route.params.id))
@@ -54,8 +55,14 @@
     return `https://image.tmdb.org/t/p/w500${movieDetail.value.poster_path}`
   })
 
+  const displayTitle = computed(() => movieDetail.value?.title || movieDetail.value?.name || 'Untitled')
+
   const genresLabel = computed(() => {
     return movieDetail.value?.genres?.map((genre: any) => genre.name).join(', ') || 'N/A'
+  })
+
+  const releaseDateLabel = computed(() => {
+    return movieDetail.value?.release_date || movieDetail.value?.first_air_date || 'N/A'
   })
 
   const castLabel = computed(() => {
@@ -64,7 +71,7 @@
 
   const videoEmbedUrl = computed(() => {
     const id = movieId.value
-    return id ? `https://vsembed.ru/embed/movie/${id}/` : ''
+    return id ? `https://vsembed.ru/embed/${mediaType.value}/${id}/` : ''
   })
 
   onMounted(async () => {
@@ -73,8 +80,8 @@
 
     try {
       const [details, credits] = await Promise.all([
-        getMovieDetails({ movieId }),
-        getMovieCredits({ movieId }),
+        getMovieDetails({ movieId, mediaType: mediaType.value }),
+        getMovieCredits({ movieId, mediaType: mediaType.value }),
       ])
 
       movieDetail.value = details

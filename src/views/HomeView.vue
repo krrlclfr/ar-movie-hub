@@ -6,6 +6,34 @@
         <div class="text-body-1 text-medium-emphasis">Browse your favorite content</div>
       </div>
 
+      <v-row v-if="featuredMovies.length" class="mb-6">
+        <v-col cols="12">
+          <div class="d-flex justify-space-between align-center mb-3">
+            <div class="text-h6 font-weight-bold">Latest Movies</div>
+            <div class="text-body-2 text-medium-emphasis">Newest releases</div>
+          </div>
+
+          <v-carousel
+            height="660"
+            cycle
+            show-arrows="hover"
+            hide-delimiters
+            class="overflow-hidden carousel-full"
+          >
+            <v-carousel-item v-for="movie in featuredMovies" :key="movie.id">
+              <v-img :src="getBackdropUrl(movie.backdrop_path)" :alt="movie.title" height="660" class="carousel-image">
+                <div class="d-flex fill-height align-end">
+                  <div class="pa-4 text-white carousel-caption w-100">
+                    <div class="text-h6 font-weight-bold">{{ movie.title }}</div>
+                    <div class="text-caption">{{ movie.release_date }}</div>
+                  </div>
+                </div>
+              </v-img>
+            </v-carousel-item>
+          </v-carousel>
+        </v-col>
+      </v-row>
+
       <v-text-field
         v-model="searchQuery"
         class="mx-auto mb-4"
@@ -14,6 +42,7 @@
         placeholder="Enter a movie title"
         variant="outlined"
         clearable
+        @click:clear="handleClearSearch"
       />
 
       <NavigationBar v-model="selectedCategory" />
@@ -55,12 +84,13 @@
   import { useRouter } from 'vue-router'
   import NavigationBar from '@/components/NavigationBar.vue'
   import MovieCard from '@/components/MovieCard.vue'
-  import { discoverMovies, discoverTvShows, getMovieGenres, searchMovies } from '@/services/tmdb'
+  import { discoverMovies, discoverTvShows, getMovieGenres, getNowPlayingMovies, searchMovies } from '@/services/tmdb'
 
   const router = useRouter()
   const selectedCategory = ref('movies')
   const searchQuery = ref('')
   const movies = ref<any[]>([])
+  const featuredMovies = ref<any[]>([])
   const movieGenres = ref<Record<number, string>>({})
   const page = ref(1)
   const totalPages = ref(1)
@@ -87,6 +117,30 @@
     }
   }
 
+  const getBackdropUrl = (backdropPath?: string) => {
+    if (!backdropPath) {
+      return 'https://placehold.co/1280x720/1f2937/ffffff?text=No+Image'
+    }
+
+    return `https://image.tmdb.org/t/p/w1280${backdropPath}`
+  }
+
+  const loadFeaturedMovies = async () => {
+    try {
+      const data = await getNowPlayingMovies({ page: 1, language: 'en' })
+      featuredMovies.value = (data.results || []).slice(0, 6)
+    } catch (error) {
+      console.error('TMDB featured movies error:', error)
+    }
+  }
+
+  const handleClearSearch = async () => {
+    searchQuery.value = ''
+    page.value = 1
+    totalPages.value = 1
+    await loadContent()
+  }
+
   const handlePageChange = async (newPage: number) => {
     page.value = newPage
     if (searchQuery.value.trim()) {
@@ -108,7 +162,12 @@
 
     isLoading.value = true
     try {
-      const data = await searchMovies({ query, page: page.value, language: 'en' })
+      const data = await searchMovies({
+        query,
+        page: page.value,
+        language: 'en',
+        mediaType: selectedCategory.value === 'tv' ? 'tv' : 'movie',
+      })
       movies.value = data.results || []
       totalPages.value = Math.min(data.total_pages || 1, 100)
     } catch (error) {
@@ -118,13 +177,13 @@
     }
   }
 
-  const goToMovieDetail = (movieId: number) => {
+  const goToMovieDetail = (movieId: number, mediaType: 'movie' | 'tv' = 'movie') => {
     if (!movieId) return
-    router.push(`/movie/${movieId}`)
+    router.push(`/${mediaType}/${movieId}`)
   }
 
   onMounted(() => {
-    void loadContent()
+    void Promise.all([loadContent(), loadFeaturedMovies()])
   })
 
   watch(searchQuery, () => {
@@ -163,5 +222,21 @@
   .movie-card-skeleton {
     width: 100%;
     min-height: 340px;
+  }
+
+  .carousel-full {
+    width: 100%;
+  }
+
+  .carousel-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .carousel-caption {
+    background: rgba(236, 231, 231, 0.6);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
   }
 </style>

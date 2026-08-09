@@ -67,20 +67,45 @@ export async function getMovieGenres(language = 'en') {
   return data.genres || []
 }
 
-export interface SearchMovieParams {
-  query: string
+export interface NowPlayingMovieParams {
   page?: number
   language?: string
 }
 
+export async function getNowPlayingMovies(params: NowPlayingMovieParams = {}) {
+  const query = new URLSearchParams({
+    page: String(params.page ?? 1),
+    language: params.language ?? 'en',
+  })
+
+  const response = await fetch(`${TMDB_BASE_URL}/movie/now_playing?${query.toString()}`, {
+    method: 'GET',
+    headers: getTmdbHeaders(),
+  })
+
+  if (!response.ok) {
+    throw new Error(`TMDB now playing request failed with status ${response.status}`)
+  }
+
+  return response.json()
+}
+
+export interface SearchMovieParams {
+  query: string
+  page?: number
+  language?: string
+  mediaType?: 'movie' | 'tv'
+}
+
 export async function searchMovies(params: SearchMovieParams) {
+  const mediaType = params.mediaType ?? 'movie'
   const query = new URLSearchParams({
     query: params.query,
     page: String(params.page ?? 1),
     language: params.language ?? 'en',
   })
 
-  const response = await fetch(`${TMDB_BASE_URL}/search/movie?${query.toString()}`, {
+  const response = await fetch(`${TMDB_BASE_URL}/search/${mediaType}?${query.toString()}`, {
     method: 'GET',
     headers: getTmdbHeaders(),
   })
@@ -95,14 +120,16 @@ export async function searchMovies(params: SearchMovieParams) {
 export interface MovieDetailsParams {
   movieId: number | string
   language?: string
+  mediaType?: 'movie' | 'tv'
 }
 
 export async function getMovieDetails(params: MovieDetailsParams) {
+  const mediaType = params.mediaType ?? 'movie'
   const query = new URLSearchParams({
     language: params.language ?? 'en',
   })
 
-  const response = await fetch(`${TMDB_BASE_URL}/movie/${params.movieId}?${query.toString()}`, {
+  const response = await fetch(`${TMDB_BASE_URL}/${mediaType}/${params.movieId}?${query.toString()}`, {
     method: 'GET',
     headers: getTmdbHeaders(),
   })
@@ -115,11 +142,12 @@ export async function getMovieDetails(params: MovieDetailsParams) {
 }
 
 export async function getMovieCredits(params: MovieDetailsParams) {
+  const mediaType = params.mediaType ?? 'movie'
   const query = new URLSearchParams({
     language: params.language ?? 'en',
   })
 
-  const response = await fetch(`${TMDB_BASE_URL}/movie/${params.movieId}/credits?${query.toString()}`, {
+  const response = await fetch(`${TMDB_BASE_URL}/${mediaType}/${params.movieId}/credits?${query.toString()}`, {
     method: 'GET',
     headers: getTmdbHeaders(),
   })

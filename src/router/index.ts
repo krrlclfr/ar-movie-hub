@@ -14,6 +14,12 @@ const routes = [
     component: MovieDetailView,
     props: true,
   },
+  {
+    path: '/tv/:id',
+    name: 'tv-detail',
+    component: MovieDetailView,
+    props: true,
+  },
 ]
 
 const router = createRouter({

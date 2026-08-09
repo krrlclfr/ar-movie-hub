@@ -1,14 +1,14 @@
 <template>
-  <v-card class="movie-card" rounded="lg" variant="outlined" @click="emit('select', movie.id)">
+  <v-card class="movie-card" rounded="lg" variant="outlined" @click="emit('select', movie.id, mediaType)">
     <v-img
       :src="posterUrl"
-      :alt="movie.title"
+      :alt="displayTitle"
       height="320"
       cover
     />
 
     <v-card-title class="text-body-2 font-weight-bold line-clamp">
-      {{ movie.title }}
+      {{ displayTitle }}
     </v-card-title>
 
     <v-card-text>
@@ -27,7 +27,8 @@
 
   interface Movie {
     id: number
-    title: string
+    title?: string | null
+    name?: string | null
     poster_path?: string | null
     release_date?: string | null
     vote_average?: number | null
@@ -38,8 +39,11 @@
   }>()
 
   const emit = defineEmits<{
-    (e: 'select', value: number): void
+    (e: 'select', value: number, mediaType: 'movie' | 'tv'): void
   }>()
+
+  const mediaType = computed(() => (props.movie.name ? 'tv' : 'movie'))
+  const displayTitle = computed(() => props.movie.title || props.movie.name || 'Untitled')
 
   const posterUrl = computed(() => {
     if (!props.movie.poster_path) return 'https://via.placeholder.com/240x320?text=No+Image'

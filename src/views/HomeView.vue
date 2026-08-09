@@ -1,6 +1,6 @@
 <template>
   <v-main class="bg-grey-lighten-4">
-    <v-container class="py-8" max-width="1200">
+    <v-container class="py-8" width="100%">
       <div class="text-center mb-6">
         <div class="text-h4 font-weight-bold mb-2">AR Movie Hub</div>
         <div class="text-body-1 text-medium-emphasis">Browse your favorite content</div>
@@ -177,9 +177,9 @@
     }
   }
 
-  const goToMovieDetail = (movieId: number, mediaType: 'movie' | 'tv' = 'movie') => {
+  const goToMovieDetail = (movieId: number) => {
     if (!movieId) return
-    router.push(`/${mediaType}/${movieId}`)
+    router.push(`/movie/${movieId}`)
   }
 
   onMounted(() => {

@@ -27,14 +27,14 @@ export function trackPopup(popup: WindowProxy, url: string, name: string | null 
   return id
 }
 
-export function openPopup(url: string, name: string | null = '_blank', features: string | null = ''): PopupReference {
+export function openPopup(url: string, name: string | undefined = '_blank', features: string | undefined = ''): PopupReference {
   const popup = window.open(url, name, features ?? '')
 
   if (!popup) {
     return null
   }
 
-  trackPopup(popup, url, name)
+  trackPopup(popup, url, name ?? null)
   return popup
 }
 

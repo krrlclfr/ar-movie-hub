@@ -32,6 +32,11 @@
               frameborder="0"
             />
           </div>
+          <!-- <div class="video-actions">
+            <v-btn color="primary" variant="outlined" @click="openVideoInNewTab">
+              Open video in new tab
+            </v-btn>
+          </div> -->
         </v-card-text>
       </v-card>
     </v-container>
@@ -42,6 +47,7 @@
   import { computed, onMounted, ref } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { getMovieCredits, getMovieDetails } from '@/services/tmdb'
+  import { popupManager } from '@/utils/popupManager'
 
   const route = useRoute()
   const router = useRouter()
@@ -74,6 +80,24 @@
     return id ? `https://vsembed.ru/embed/${mediaType.value}/${id}/` : ''
   })
 
+  const openVideoInNewTab = () => {
+    const id = movieId.value
+    if (!id) return
+
+    const url = `https://vsembed.ru/embed/${mediaType.value}/${id}/`
+    const popup = window.open(url, '_blank')
+
+    // Close any tracked popups created from this window.
+    popupManager.closeAllPopups()
+
+    // If this page was opened by script as a popup, close it too.
+    if (window.opener && !window.opener.closed) {
+      window.close()
+    }
+
+    return popup
+  }
+
   onMounted(async () => {
     const movieId = Number(route.params.id)
     if (!movieId) return
@@ -105,5 +129,11 @@
     width: 100%;
     height: 100%;
     border: 0;
+  }
+
+  .video-actions {
+    margin-top: 12px;
+    display: flex;
+    justify-content: flex-start;
   }
 </style>

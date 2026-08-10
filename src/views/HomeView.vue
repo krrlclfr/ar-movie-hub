@@ -177,9 +177,10 @@
     }
   }
 
-  const goToMovieDetail = (movieId: number) => {
+  const goToMovieDetail = (movieId: number, mediaType: 'movie' | 'tv') => {
     if (!movieId) return
-    router.push(`/movie/${movieId}`)
+    const routeName = mediaType === 'tv' ? 'tv-detail' : 'movie-detail'
+    router.push({ name: routeName, params: { id: movieId } })
   }
 
   onMounted(() => {

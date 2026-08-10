@@ -3,8 +3,8 @@
     <v-container class="py-8" max-width="900">
       <v-btn prepend-icon="mdi-arrow-left" class="mb-4" @click="router.back()">Back</v-btn>
 
-      <div class="my-12">
-        <div class="mb-2 text-subtitle-1 font-weight-bold">Watch</div>
+      <div class="my-8">
+        <div class="mb-4 text-subtitle-1 font-weight-bold">Watch</div>
         <div class="video-frame">
           <iframe
             v-if="movieDetail"

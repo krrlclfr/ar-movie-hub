@@ -3,7 +3,7 @@
     <v-img
       :src="posterUrl"
       :alt="displayTitle"
-      height="320"
+      :height="height"
       cover
     />
 
@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
   import { computed } from 'vue'
+  import { useDisplay } from 'vuetify'
 
   interface Movie {
     id: number
@@ -50,6 +51,9 @@
     return `https://image.tmdb.org/t/p/w500${props.movie.poster_path}`
   })
 
+  const { smAndDown } = useDisplay()
+
+  const height = computed(() => (smAndDown.value ? 220 : 320))
   const releaseDate = computed(() => props.movie.release_date || 'N/A')
   const voteAverage = computed(() => {
     if (props.movie.vote_average == null) return 'N/A'

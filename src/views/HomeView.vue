@@ -61,10 +61,12 @@
         </div>
       </div>
 
-      <div v-else-if="movies.length" class="movie-grid">
-        <div v-for="movie in movies" :key="movie.id" class="movie-item">
-          <MovieCard :movie="movie" @select="goToMovieDetail" />
-        </div>
+      <div v-else-if="movies.length">
+        <v-row dense>
+            <v-col cols="6" sm="6" md="2" lg="2" v-for="movie in movies" :key="movie.id" class="movie-item">
+              <MovieCard :movie="movie" @select="goToMovieDetail" />
+            </v-col>
+        </v-row>
       </div>
 
       <div v-if="movies.length" class="d-flex justify-center mt-6 pagination-wrapper">
@@ -130,7 +132,7 @@
   const loadFeaturedMovies = async () => {
     try {
       const data = await getNowPlayingMovies({ page: 1, language: 'en' })
-      featuredMovies.value = (data.results || []).slice(0, 6)
+      featuredMovies.value = (data.results || []).slice(0, 10)
     } catch (error) {
       console.error('TMDB featured movies error:', error)
     }

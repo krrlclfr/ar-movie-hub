@@ -4,7 +4,7 @@ import Fonts from 'unplugin-fonts/vite'
 import { defineConfig } from 'vite'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
-const repoBase = '/ar-movie-hub/'
+const repoBase = './'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({

@@ -10,7 +10,6 @@ export interface PopupEntry {
 
 const popups = new Map<string, PopupEntry>()
 let nextPopupId = 1
-let originalWindowOpen: typeof window.open | null = null
 
 function generateId(name: string | null) {
   return `${name ?? 'popup'}-${nextPopupId++}`
@@ -37,42 +36,6 @@ export function openPopup(url: string, name: string | undefined = '_blank', feat
 
   trackPopup(popup, url, name ?? null)
   return popup
-}
-
-export function installPopupGuard() {
-  if (originalWindowOpen) {
-    return
-  }
-
-  originalWindowOpen = window.open.bind(window)
-
-  window.open = ((url?: string | URL | null, target?: string, features?: string | null) => {
-    const parsedUrl = typeof url === 'string' ? url : url?.toString() ?? ''
-    const allowNewTab = !shouldBlockNewTab(parsedUrl, target)
-
-    const popup = originalWindowOpen(parsedUrl, allowNewTab ? target ?? '_self' : '_self', features ?? '')
-    if (popup && allowNewTab) {
-      trackPopup(popup, parsedUrl, typeof target === 'string' ? target : null)
-    }
-
-    if (popup && !allowNewTab) {
-      try {
-        popup.close()
-      } catch {
-        // ignore
-      }
-    }
-
-    return popup
-  }) as typeof window.open
-}
-
-export function shouldBlockNewTab(url: string, target?: string | null): boolean {
-  if (!target || target === '_self') {
-    return false
-  }
-
-  return target === '_blank'
 }
 
 export function closePopup(popupOrId: PopupReference | string): boolean {
@@ -157,8 +120,6 @@ export function closePopupTriggeredByIframe(): boolean {
 export const popupManager = {
   trackPopup,
   openPopup,
-  installPopupGuard,
-  shouldBlockNewTab,
   closePopup,
   closeAllPopups,
   getOpenPopups,

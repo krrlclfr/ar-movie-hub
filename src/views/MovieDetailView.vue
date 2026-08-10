@@ -7,46 +7,49 @@
         <div class="mb-2 text-subtitle-1 font-weight-bold">Watch</div>
         <div class="video-frame">
           <iframe
+            v-if="!isLoading && movieDetail"
             :src="videoEmbedUrl"
             title="Movie video"
             allow="autoplay; fullscreen"
             allowfullscreen
             referrerpolicy="origin"
             frameborder="0"
-          />
-  
+          ></iframe>
+          <v-skeleton-loader v-else type="image" class="video-skeleton" />
         </div>
       </div>
-      <v-card v-if="movieDetail" rounded="lg" variant="outlined">
-        <v-row dense>
-          <v-col cols="12" md="4">
-            <v-img :src="posterUrl" :alt="displayTitle" height="420" cover />
-          </v-col>
-          <v-col cols="12" md="8">
-            <v-card-title class="text-h5">{{ displayTitle }}</v-card-title>
-            <v-card-text>
-              <p class="mb-3">{{ movieDetail.overview || 'No overview available.' }}</p>
-              <div class="mb-2"><strong>Genres:</strong> {{ genresLabel }}</div>
-              <div class="mb-2"><strong>Release date:</strong> {{ releaseDateLabel }}</div>
-              <div class="mb-2"><strong>Vote average:</strong> {{ movieDetail.vote_average?.toFixed(1) || 'N/A' }} / 10</div>
-              <div><strong>Cast:</strong> {{ castLabel }}</div>
-            </v-card-text>
-          </v-col>
-        </v-row>
-
-        <!-- <v-card-text v-if="movieId">
-          <div class="mb-2 text-subtitle-1 font-weight-bold">Watch</div>
-          <div class="video-frame">
-            <iframe
-              :src="videoEmbedUrl"
-              title="Movie video"
-              allow="autoplay; fullscreen"
-              allowfullscreen
-              referrerpolicy="origin"
-              frameborder="0"
-            />
-          </div>
-        </v-card-text> -->
+      <v-card rounded="lg" variant="outlined" class="detail-card">
+        <template v-if="!isLoading && movieDetail">
+          <v-row dense>
+            <v-col cols="12" md="4">
+              <v-img :src="posterUrl" :alt="displayTitle" height="420" cover />
+            </v-col>
+            <v-col cols="12" md="8">
+              <v-card-title class="text-h5">{{ displayTitle }}</v-card-title>
+              <v-card-text>
+                <p class="mb-3">{{ movieDetail.overview || 'No overview available.' }}</p>
+                <div class="mb-2"><strong>Genres:</strong> {{ genresLabel }}</div>
+                <div class="mb-2"><strong>Release date:</strong> {{ releaseDateLabel }}</div>
+                <div class="mb-2"><strong>Vote average:</strong> {{ movieDetail.vote_average?.toFixed(1) || 'N/A' }} / 10</div>
+                <div><strong>Cast:</strong> {{ castLabel }}</div>
+              </v-card-text>
+            </v-col>
+          </v-row>
+        </template>
+        <template v-else>
+          <v-row dense>
+            <v-col cols="12" md="4">
+              <v-skeleton-loader type="image" class="detail-skeleton-image" />
+            </v-col>
+            <v-col cols="12" md="8">
+              <v-skeleton-loader type="heading" class="mb-4" />
+              <v-skeleton-loader type="text" class="mb-2" />
+              <v-skeleton-loader type="text" class="mb-2" />
+              <v-skeleton-loader type="text" class="mb-2" />
+              <v-skeleton-loader type="text" class="mb-2" />
+            </v-col>
+          </v-row>
+        </template>
       </v-card>
     </v-container>
   </v-main>
@@ -64,6 +67,7 @@
   const movieDetail = ref<any | null>(null)
   const cast = ref<any[]>([])
   const movieId = computed(() => Number(route.params.id))
+  const isLoading = ref(true)
 
   const posterUrl = computed(() => {
     if (!movieDetail.value?.poster_path) return 'https://via.placeholder.com/500x750?text=No+Image'
@@ -121,6 +125,8 @@
       cast.value = credits.cast || []
     } catch (error) {
       console.error('TMDB movie detail error:', error)
+    } finally {
+      isLoading.value = false
     }
   })
 </script>
@@ -144,5 +150,16 @@
     margin-top: 12px;
     display: flex;
     justify-content: flex-start;
+  }
+
+  .video-skeleton,
+  .detail-skeleton-image {
+    width: 100%;
+    min-height: 280px;
+    border-radius: 12px;
+  }
+
+  .detail-card {
+    overflow: hidden;
   }
 </style>

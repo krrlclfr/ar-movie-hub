@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar density="compact" flat class="mx-auto mb-4" max-width="480">
+  <v-app-bar density="compact" flat class="mx-auto mb-4" app>
     <template #append>
       <v-btn-toggle v-model="activeCategory" color="white" mandatory divided>
         <v-btn value="movies" size="large">Movies</v-btn>

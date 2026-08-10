@@ -1,6 +1,6 @@
 <template>
   <v-main class="bg-grey-lighten-4">
-    <v-container class="py-8" width="100%">
+    <v-container class="py-8">
       <div class="text-center mb-6">
         <div class="text-h4 font-weight-bold mb-2">AR Movie Hub</div>
         <div class="text-body-1 text-medium-emphasis">Browse your favorite content</div>
@@ -67,12 +67,14 @@
         </div>
       </div>
 
-      <div v-if="movies.length" class="d-flex justify-center mt-6">
+      <div v-if="movies.length" class="d-flex justify-center mt-6 pagination-wrapper">
         <v-pagination
           v-model="page"
           :length="totalPages"
-          :total-visible="7"
+          :total-visible="paginationTotalVisible"
+          size="small"
           @update:model-value="handlePageChange"
+          class="pagination-sm"
         />
       </div>
     </v-container>
@@ -80,7 +82,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { ref, onMounted, watch } from 'vue'
+  import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
   import { useRouter } from 'vue-router'
   import NavigationBar from '@/components/NavigationBar.vue'
   import MovieCard from '@/components/MovieCard.vue'
@@ -177,6 +179,13 @@
     }
   }
 
+  const isMdDown = ref(false)
+  const paginationTotalVisible = computed(() => (isMdDown.value ? 3 : 7))
+
+  const updatePaginationBreakpoint = () => {
+    isMdDown.value = window.matchMedia('(max-width: 960px)').matches
+  }
+
   const goToMovieDetail = (movieId: number, mediaType: 'movie' | 'tv') => {
     if (!movieId) return
     const routeName = mediaType === 'tv' ? 'tv-detail' : 'movie-detail'
@@ -185,6 +194,8 @@
 
   onMounted(() => {
     void Promise.all([loadContent(), loadFeaturedMovies()])
+    updatePaginationBreakpoint()
+    window.addEventListener('resize', updatePaginationBreakpoint)
   })
 
   watch(searchQuery, () => {
@@ -199,6 +210,10 @@
   watch(selectedCategory, () => {
     page.value = 1
     void loadContent()
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener('resize', updatePaginationBreakpoint)
   })
 </script>
 
@@ -239,5 +254,19 @@
     background: rgba(236, 231, 231, 0.6);
     backdrop-filter: blur(2px);
     -webkit-backdrop-filter: blur(2px);
+  }
+
+  .pagination-wrapper {
+    width: 100%;
+    overflow-x: hidden;
+    min-width: 0;
+  }
+
+  .pagination-sm {
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.8rem;
+    min-height: 32px;
+    padding: 0 4px;
   }
 </style>

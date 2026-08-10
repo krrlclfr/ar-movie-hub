@@ -36,7 +36,7 @@ if (redirectPath) {
 const originalWindowOpen = window.open.bind(window)
 window.open = ((url?: string | URL | null, target?: string, features?: string | null) => {
   const parsedUrl = typeof url === 'string' ? url : url?.toString() ?? ''
-  const allowedHosts = ['localhost', '127.0.0.1', 'github.io', 'githubusercontent.com']
+  const allowedHosts = ['localhost', '127.0.0.1', 'github.io', 'githubusercontent.com', 'vercel.app']
   const isAllowed = allowedHosts.some((host) => parsedUrl.includes(host)) || parsedUrl.startsWith('/') || parsedUrl.startsWith('./') || parsedUrl.startsWith('../') || parsedUrl.startsWith(window.location.origin)
 
   if (!isAllowed) {

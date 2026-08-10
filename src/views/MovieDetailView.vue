@@ -3,6 +3,20 @@
     <v-container class="py-8" max-width="900">
       <v-btn prepend-icon="mdi-arrow-left" class="mb-4" @click="router.back()">Back</v-btn>
 
+      <div class="my-12">
+        <div class="mb-2 text-subtitle-1 font-weight-bold">Watch</div>
+        <div class="video-frame">
+          <iframe
+            :src="videoEmbedUrl"
+            title="Movie video"
+            allow="autoplay; fullscreen"
+            allowfullscreen
+            referrerpolicy="origin"
+            frameborder="0"
+          />
+  
+        </div>
+      </div>
       <v-card v-if="movieDetail" rounded="lg" variant="outlined">
         <v-row dense>
           <v-col cols="12" md="4">
@@ -20,7 +34,7 @@
           </v-col>
         </v-row>
 
-        <v-card-text v-if="movieId">
+        <!-- <v-card-text v-if="movieId">
           <div class="mb-2 text-subtitle-1 font-weight-bold">Watch</div>
           <div class="video-frame">
             <iframe
@@ -32,12 +46,7 @@
               frameborder="0"
             />
           </div>
-          <!-- <div class="video-actions">
-            <v-btn color="primary" variant="outlined" @click="openVideoInNewTab">
-              Open video in new tab
-            </v-btn>
-          </div> -->
-        </v-card-text>
+        </v-card-text> -->
       </v-card>
     </v-container>
   </v-main>

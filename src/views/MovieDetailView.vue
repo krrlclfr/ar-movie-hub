@@ -15,6 +15,11 @@
             referrerpolicy="origin"
             frameborder="0"
           ></iframe>
+          <div
+            v-if="isPopupTab"
+            class="iframe-click-overlay"
+            @click="closePopupOnIframeClick"
+          ></div>
         </div>
       </div>
       <v-card rounded="lg" variant="outlined" class="detail-card" v-if="movieDetail">
@@ -76,22 +81,10 @@
     return id ? `https://vsembed.ru/embed/${mediaType.value}/${id}/` : ''
   })
 
-  const openVideoInNewTab = () => {
-    const id = movieId.value
-    if (!id) return
+  const isPopupTab = ref(!!window.opener && !window.opener.closed)
 
-    const url = `https://vsembed.ru/embed/${mediaType.value}/${id}/`
-    const popup = window.open(url, '_blank')
-
-    // Close any tracked popups created from this window.
-    popupManager.closeAllPopups()
-
-    // If this page was opened by script as a popup, close it too.
-    if (window.opener && !window.opener.closed) {
-      window.close()
-    }
-
-    return popup
+  const closePopupOnIframeClick = () => {
+    popupManager.closePopupTriggeredByIframe()
   }
 
   onMounted(async () => {

@@ -33,23 +33,7 @@ if (redirectPath) {
   router.replace(redirectPath)
 }
 
-const originalWindowOpen = window.open.bind(window)
-window.open = ((url?: string | URL | null, target?: string, features?: string | null) => {
-  const parsedUrl = typeof url === 'string' ? url : url?.toString() ?? ''
-  const allowedHosts = ['localhost', '127.0.0.1', 'github.io', 'githubusercontent.com', 'vercel.app']
-  const isAllowed = allowedHosts.some((host) => parsedUrl.includes(host)) || parsedUrl.startsWith('/') || parsedUrl.startsWith('./') || parsedUrl.startsWith('../') || parsedUrl.startsWith(window.location.origin)
-
-  if (!isAllowed) {
-    return null
-  }
-
-  const popup = originalWindowOpen(parsedUrl, target ?? '_self', features ?? '')
-  if (popup) {
-    popupManager.trackPopup(popup, parsedUrl, typeof target === 'string' ? target : null)
-  }
-
-  return popup
-}) as typeof window.open
+popupManager.installPopupGuard()
 
 window.addEventListener('beforeunload', () => {
   // no-op; keeps the popup guard in place for browser-friendly handling

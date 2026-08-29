@@ -2,8 +2,8 @@
   <v-app-bar density="compact" flat class="mx-auto mb-4" app>
     <template #append>
       <v-btn-toggle v-model="activeCategory" color="white" mandatory divided>
-        <v-btn value="movies" size="large">Movies</v-btn>
-        <v-btn value="tv" size="large">TV Show</v-btn>
+        <v-btn :class="{ 'nav-active': activeCategory === 'movies' }" value="movies" size="large">Movies</v-btn>
+        <v-btn :class="{ 'nav-active': activeCategory === 'tv' }" value="tv" size="large">TV Show</v-btn>
       </v-btn-toggle>
     </template>
   </v-app-bar>
@@ -32,3 +32,11 @@
     }
   })
 </script>
+
+<style scoped>
+  .nav-active {
+    box-shadow: none;
+    border-bottom: 3px solid rgba(70, 0, 0, 0.92);
+    border-radius: 0 !important;
+  }
+</style>

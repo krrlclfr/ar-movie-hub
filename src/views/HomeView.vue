@@ -3,7 +3,7 @@
     <v-container class="py-8">
       <div class="text-center mb-6">
         <div class="text-h4 font-weight-bold mb-2">AR Movie Hub</div>
-        <div class="text-body-1 text-medium-emphasis">Browse your favorite content</div>
+        <div class="text-body-1 text-medium-emphasis">Browse your favorite content of movie</div>
       </div>
 
       <v-row v-if="featuredMovies.length" class="mb-6">
@@ -63,7 +63,7 @@
 
       <div v-else-if="movies.length">
         <v-row dense>
-            <v-col cols="6" sm="6" md="2" lg="2" v-for="movie in movies" :key="movie.id" class="movie-item">
+            <v-col cols="6" sm="6" md="3" lg="3" xl="2" v-for="movie in movies" :key="movie.id" class="movie-item">
               <MovieCard :movie="movie" @select="goToMovieDetail" />
             </v-col>
         </v-row>

@@ -18,6 +18,9 @@
       <div class="text-caption text-medium-emphasis">
         Vote: {{ voteAverage }}
       </div>
+      <div class="text-caption text-medium-emphasis">
+        Popularity: {{ popularity }}
+      </div>
     </v-card-text>
   </v-card>
 </template>
@@ -32,7 +35,9 @@
     name?: string | null
     poster_path?: string | null
     release_date?: string | null
+    first_air_date?: string | null
     vote_average?: number | null
+    popularity?: number | null
   }
 
   const props = defineProps<{
@@ -54,10 +59,14 @@
   const { smAndDown } = useDisplay()
 
   const height = computed(() => (smAndDown.value ? 220 : 320))
-  const releaseDate = computed(() => props.movie.release_date || 'N/A')
+  const releaseDate = computed(() => props.movie.release_date || props.movie.first_air_date || 'N/A')
   const voteAverage = computed(() => {
     if (props.movie.vote_average == null) return 'N/A'
     return `${props.movie.vote_average.toFixed(1)} / 10`
+  })
+  const popularity = computed(() => {
+    if (props.movie.popularity == null) return 'N/A'
+    return `${props.movie.popularity.toFixed(1)}`
   })
 </script>
 

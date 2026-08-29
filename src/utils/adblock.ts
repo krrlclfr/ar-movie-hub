@@ -36,7 +36,8 @@ export async function unregisterAdblockServiceWorker() {
   try {
     const regs = await navigator.serviceWorker.getRegistrations()
     for (const r of regs) {
-      if (r.scriptURL.endsWith('/adblock-sw.js')) {
+      const scriptUrl = r.active?.scriptURL ?? r.installing?.scriptURL ?? r.waiting?.scriptURL
+      if (scriptUrl?.endsWith('/adblock-sw.js')) {
         await r.unregister()
       }
     }

@@ -3,7 +3,7 @@
     <v-container class="py-8">
       <div class="text-center mb-6">
         <div class="text-h4 font-weight-bold mb-2">AR Movie Hub</div>
-        <div class="text-body-1 text-medium-emphasis">Browse your favorite content of movie</div>
+        <div class="text-body-1 text-medium-emphasis">Browse your favorite content of movies</div>
       </div>
 
       <v-row v-if="featuredMovies.length" class="mb-6">
